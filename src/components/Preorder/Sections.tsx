@@ -496,6 +496,7 @@ export function FinalCTA({
                   "Exclusive MyPerro founding merch pack",
                   "Featured on our Founding Pack wall: your dog\u2019s story on our website",
                   "One-on-one onboarding call with the MyPerro team",
+                  "Exclusive Founding Pack sticker set delivered with collar",
                   "Direct private WhatsApp channel with the founding team",
                 ].map((perk) => (
                   <li
