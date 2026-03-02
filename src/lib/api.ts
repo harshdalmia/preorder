@@ -18,6 +18,8 @@ export interface SubmitResponse {
     city: string;
     dogsname: string;
     paymentStatus: string;
+    tier: "starter" | "founding";
+    amount: number;
   };
 }
 
@@ -32,6 +34,8 @@ export interface PaymentSuccessResponse {
     cohortNumber: number;
     cohortPosition: number;
     referralCode: string;   // user's own new code to share
+    tier: "starter" | "founding";
+    amount: number;
   };
 }
 
@@ -41,6 +45,8 @@ export interface ActivityEntry {
   city: string;
   cohortNumber: number;
   position: number;
+  tier: "starter" | "founding";
+  amount: number;
   claimedAt: string;        // ISO — convert with timeAgo()
 }
 

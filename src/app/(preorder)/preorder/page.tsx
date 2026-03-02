@@ -17,6 +17,7 @@ import Hero from "@/components/Preorder/Hero";
 import TickerStrip from "@/components/Preorder/TickerStrip";
 import PerksSection from "@/components/Preorder/PerksSection";
 import PreorderModal from "@/components/Preorder/PreorderModal";
+import type { PackTier } from "@/components/Preorder/PreorderModal";
 import { SuccessModal, Confetti } from "@/components/Preorder/SuccessModal";
 import {
   SavingsSection,
@@ -112,6 +113,7 @@ export default function PreorderPage() {
   const [result, setResult] = useState<PaymentResult | null>(null);
   const [confetti, setConfetti] = useState(false);
   const [teaserPet, setTeaserPet] = useState("");
+  const [selectedTier, setSelectedTier] = useState<PackTier>("starter");
   const [showNav, setShowNav] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -160,7 +162,8 @@ export default function PreorderPage() {
   const lastClaimed = spots.lastClaimedAt
     ? timeAgo(spots.lastClaimedAt)
     : "recently";
-  const openModal = () => {
+  const openModal = (tier: PackTier = "starter") => {
+    setSelectedTier(tier);
     setModalOpen(true);
     setMobileMenuOpen(false);
   };
@@ -215,7 +218,7 @@ export default function PreorderPage() {
 
             {/* Reserve button */}
             <button
-              onClick={openModal}
+              onClick={() => openModal("starter")}
               className="bg-[#E8622A] text-white font-semibold text-[12px] tracking-wide px-5 sm:px-6 py-[9px] sm:py-[10px] rounded-full transition-opacity hover:opacity-90"
             >
               Reserve Spot
@@ -271,11 +274,11 @@ export default function PreorderPage() {
         lastClaimed={lastClaimed}
         teaserPet={teaserPet}
         onTeaserChange={setTeaserPet}
-        onClaim={openModal}
+        onClaim={() => openModal("starter")}
       />
       <TickerStrip />
       <PerksSection />
-      <PetWall cohorts={cohorts} onClaim={openModal} />
+      <PetWall cohorts={cohorts} onClaim={() => openModal("starter")} />
       <StepsSection />
       <FaqSection />
       <FinalCTA remaining={spots.remaining} onClaim={openModal} />
@@ -313,6 +316,7 @@ export default function PreorderPage() {
         onClose={() => setModalOpen(false)}
         onSuccess={handleSuccess}
         seedPet={teaserPet}
+        tier={selectedTier}
       />
       {result && (
         <SuccessModal

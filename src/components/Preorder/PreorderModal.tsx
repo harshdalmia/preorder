@@ -6,6 +6,33 @@ import Script from "next/script";
 import { COLLAR_COLOURS, REFERRAL_SOURCES } from "@/lib/preorderData";
 import { submitOrder, confirmPayment, validateReferralCode } from "@/lib/api";
 
+export type PackTier = "starter" | "founding";
+
+const TIER_CONFIG = {
+  starter: {
+    amount: 500,
+    amountPaise: 50000,
+    label: "Starter Pack",
+    description: "Starter Pack — ₹500 token",
+    collarRemainder: "₹4,500",
+    retailPrice: "₹5,000",
+    badgeLabel: "🐾 Starter Pack",
+    accentColor: "#E8622A",
+    footerNote: "₹500 credited to collar price · Remaining ₹4,500 before delivery · 100% refundable",
+  },
+  founding: {
+    amount: 2499,
+    amountPaise: 249900,
+    label: "Founding Member",
+    description: "Founding Member — ₹2,499",
+    collarRemainder: "₹2,501",
+    retailPrice: "₹4,999",
+    badgeLabel: "🐾 Founding Pack",
+    accentColor: "#F59E0B",
+    footerNote: "₹2,499 credited to collar price · Remaining ₹2,501 before delivery · Fully refundable",
+  },
+} as const;
+
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -17,6 +44,7 @@ interface Props {
     referralCode: string;
   }) => void;
   seedPet: string;
+  tier?: PackTier;
 }
 
 type PayState = "idle" | "submitting" | "paying" | "verifying" | "error";
@@ -35,7 +63,9 @@ export default function PreorderModal({
   onClose,
   onSuccess,
   seedPet,
+  tier = "starter",
 }: Props) {
+  const tierConfig = TIER_CONFIG[tier];
   const [name, setName] = useState("");
   const [dogsname, setDogsname] = useState("");
   const [mail, setMail] = useState("");
@@ -172,6 +202,7 @@ export default function PreorderModal({
       formData.append("mail", mail.trim());
       formData.append("dogsname", dogsname.trim());
       formData.append("dogphoto", dogPhoto);
+      formData.append("tier", tier);
       if (hasReferral && refStatus === "ok" && refCode.trim())
         formData.append("referralCode", refCode.trim().toUpperCase());
 
@@ -194,12 +225,12 @@ export default function PreorderModal({
         }
         const rzp = new (window as any).Razorpay({
           key: razorpayKey,
-          amount: 50000,
+          amount: tierConfig.amountPaise,
           currency: "INR",
           name: "MyPerro",
-          description: "Founding Pack — ₹500 token",
+          description: tierConfig.description,
           prefill: { name, email: mail, contact: phoneno },
-          theme: { color: "#E8622A" },
+          theme: { color: tierConfig.accentColor },
           modal: {
             confirm_close: true,
             ondismiss: () => reject(new Error("cancelled")),
@@ -256,7 +287,7 @@ export default function PreorderModal({
         ? "Complete payment in popup →"
         : payState === "verifying"
           ? "Confirming payment..."
-          : "Reserve My Spot — ₹500 →";
+          : `Reserve My Spot — ₹${tierConfig.amount.toLocaleString("en-IN")} →`;
 
   return (
     <>
@@ -285,8 +316,10 @@ export default function PreorderModal({
             ✕
           </button>
 
-          <div className="inline-flex items-center gap-2 border border-[#E8622A]/25 text-[#E8622A]/65 text-[10px] font-semibold tracking-[2.5px] uppercase px-4 py-[5px] rounded-full mb-4 sm:mb-5">
-            🐾 Founding Pack
+          <div className="inline-flex items-center gap-2 border border-[#E8622A]/25 text-[#E8622A]/65 text-[10px] font-semibold tracking-[2.5px] uppercase px-4 py-[5px] rounded-full mb-4 sm:mb-5"
+            style={tier === "founding" ? { borderColor: "rgba(245,158,11,0.25)", color: "rgba(245,158,11,0.65)" } : undefined}
+          >
+            {tierConfig.badgeLabel}
           </div>
           <h3
             className="font-playfair font-normal text-white leading-[1.1] mb-2"
@@ -295,7 +328,7 @@ export default function PreorderModal({
             Lock in your spot.
           </h3>
           <p className="text-[13px] text-white/30 font-light leading-[1.75] mb-6 sm:mb-8">
-            Pay ₹500 now — credited towards your collar. Fully refundable.
+            Pay ₹{tierConfig.amount.toLocaleString("en-IN")} now — credited towards your collar. Fully refundable.
           </p>
 
           <div className="grid grid-cols-2 gap-3">
@@ -546,8 +579,7 @@ export default function PreorderModal({
           </button>
 
           <p className="text-[11px] text-white/15 text-center mt-4 leading-[1.7] font-light">
-            ₹500 credited to collar price · Remaining ₹4,500 before delivery ·
-            100% refundable
+            {tierConfig.footerNote}
           </p>
         </div>
       </div>

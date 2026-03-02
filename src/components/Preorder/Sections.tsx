@@ -307,7 +307,7 @@ export function FinalCTA({
   onClaim,
 }: {
   remaining: number;
-  onClaim: () => void;
+  onClaim: (tier?: "starter" | "founding") => void;
 }) {
   return (
     <>
@@ -342,12 +342,12 @@ export function FinalCTA({
         </div>
       </section>
 
-      {/* Reserve */}
+      {/* Reserve — Two-tier pricing */}
       <section
         id="reserve"
         className="bg-[#0a0a0a] py-20 sm:py-28 px-6 sm:px-10 md:px-20 border-t border-white/[0.04] text-center"
       >
-        <div className="max-w-[760px] mx-auto">
+        <div className="max-w-[960px] mx-auto">
           <h2
             className="font-playfair font-normal text-white leading-[1.05] mb-4 sm:mb-5"
             style={{ fontSize: "clamp(38px, 6vw, 84px)" }}
@@ -365,25 +365,115 @@ export function FinalCTA({
             The Founding Pack closes when the last spot is taken.
           </p>
 
-          <div className="bg-[#111] border border-white/[0.06] rounded-2xl px-8 sm:px-10 py-12 sm:py-14 max-w-[500px] mx-auto">
-            <p
-              className="font-playfair font-normal text-white mb-2"
-              style={{ fontSize: "clamp(36px, 5vw, 60px)" }}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[820px] mx-auto">
+            {/* Starter Pack */}
+            <div className="bg-[#111] border border-white/[0.06] rounded-2xl px-6 sm:px-8 py-10 sm:py-12 text-left relative overflow-hidden transition-transform hover:-translate-y-1"
+              style={{ boxShadow: "0 0 60px rgba(232,97,26,0.04)" }}
             >
-              ₹500
-            </p>
-            <p className="text-[11px] font-semibold tracking-[3px] uppercase text-white/20 mb-8 sm:mb-10">
-              Refundable Reservation Deposit
-            </p>
-            <button
-              onClick={onClaim}
-              className="w-full bg-[#E8622A] text-white font-semibold text-[14px] sm:text-[15px] py-[15px] sm:py-[16px] rounded-full transition-opacity hover:opacity-90"
+              <div className="inline-flex items-center gap-2 border border-[#E8622A]/25 text-[#E8622A]/65 text-[9px] font-semibold tracking-[2px] uppercase px-3 py-[4px] rounded-full mb-3">
+                <span className="w-[5px] h-[5px] rounded-full bg-[#E8622A]" style={{ boxShadow: "0 0 6px rgba(232,97,26,0.8)" }} />
+                Starter Pack
+              </div>
+              <h3 className="font-playfair font-normal text-white text-[24px] sm:text-[28px] leading-[1.1] mb-1">Essentials</h3>
+              <p className="text-[10px] font-semibold tracking-[1.5px] uppercase text-white/20 mb-5">3-month subscription</p>
+
+              <div className="flex items-baseline gap-2 mb-1">
+                <p className="font-playfair font-normal text-white" style={{ fontSize: "clamp(36px, 5vw, 60px)" }}>
+                  <sup className="text-[18px] align-super mr-[1px]">₹</sup>500
+                </p>
+                <span className="text-[11px] text-white/20 line-through font-mono">₹5,000</span>
+              </div>
+              <p className="text-[13px] text-[#E8622A] font-playfair italic mb-2">Collar included. You save ₹4,500.</p>
+              <p className="text-[12px] text-white/30 font-light leading-[1.7] mb-6">
+                At ₹500 you get the full MyPerro GPS collar (retail ₹5,000 incl. GST) plus a 3‑month premium subscription, locked in before we open to the public.
+              </p>
+
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-[11px] px-3 py-[4px] rounded-full border border-white/[0.08] text-white/30">🐾 Stickers</span>
+                <span className="text-[11px] px-3 py-[4px] rounded-full border border-white/[0.08] text-white/30">❤️ Feature on first 20 pups section</span>
+              </div>
+
+              <ul className="flex flex-col gap-3 mb-6">
+                {[
+                  "Early access: your collar ships before the public launch",
+                  "3 months of premium plan included free",
+                  "Exclusive Founding Pack sticker set delivered with collar",
+                ].map((perk) => (
+                  <li key={perk} className="flex items-start gap-3 text-[12px] text-white/50 font-light leading-[1.5]">
+                    <span className="w-5 h-5 rounded-full bg-[#E8622A]/10 border border-[#E8622A]/25 flex items-center justify-center shrink-0 mt-[1px]">
+                      <span className="w-[5px] h-[5px] rounded-full bg-[#E8622A]" />
+                    </span>
+                    {perk}
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={() => onClaim("starter")}
+                className="w-full bg-[#E8622A] text-white font-semibold text-[14px] py-[14px] rounded-full transition-opacity hover:opacity-90"
+              >
+                Get the Collar - ₹500 →
+              </button>
+              <p className="text-[10px] text-white/15 text-center mt-3 font-mono tracking-wide">
+                Collar + 3-month plan · Retail value ₹5,000 incl. GST
+              </p>
+            </div>
+
+            {/* Founding Pack */}
+            <div className="bg-[#111] border border-[#F59E0B]/20 rounded-2xl px-6 sm:px-8 py-10 sm:py-12 text-left relative overflow-hidden transition-transform hover:-translate-y-1"
+              style={{ boxShadow: "0 0 60px rgba(245,158,11,0.06)" }}
             >
-              Join the Founding Pack →
-            </button>
-            <p className="text-[11px] sm:text-[12px] text-white/20 font-light mt-5 sm:mt-6 leading-[1.8]">
-              Fully refundable · No commitment · Cancel anytime before dispatch
-            </p>
+              <div className="inline-flex items-center gap-2 border border-[#F59E0B]/30 text-[#F59E0B]/70 text-[9px] font-semibold tracking-[2px] uppercase px-3 py-[4px] rounded-full mb-3">
+                <span className="w-[5px] h-[5px] rounded-full bg-[#F59E0B]" style={{ boxShadow: "0 0 6px rgba(245,158,11,0.8)" }} />
+                Founding Pack
+              </div>
+              <h3 className="font-playfair font-normal text-white text-[24px] sm:text-[28px] leading-[1.1] mb-1">Founding Member</h3>
+              <p className="text-[10px] font-semibold tracking-[1.5px] uppercase text-white/20 mb-5">6-month subscription</p>
+
+              <div className="flex items-baseline gap-2 mb-1">
+                <p className="font-playfair font-normal text-[#F59E0B]" style={{ fontSize: "clamp(36px, 5vw, 60px)" }}>
+                  <sup className="text-[18px] align-super mr-[1px]">₹</sup>2,499
+                </p>
+                <span className="text-[11px] text-white/20 line-through font-mono">₹4,999</span>
+              </div>
+              <p className="text-[13px] text-[#F59E0B] font-playfair italic mb-2">Save ₹2,500 and get the full experience.</p>
+              <p className="text-[12px] text-white/30 font-light leading-[1.7] mb-6">
+                The full founding experience. You're not just buying a collar. You get merch, priority everything, and a direct line to us.
+              </p>
+
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-[11px] px-3 py-[4px] rounded-full border border-[#F59E0B]/20 text-[#F59E0B]/60 bg-[#F59E0B]/[0.05]">🎁 MyPerro merchandise</span>
+                <span className="text-[11px] px-3 py-[4px] rounded-full border border-[#F59E0B]/20 text-[#F59E0B]/60 bg-[#F59E0B]/[0.05]">📸 Get featured on our website</span>
+              </div>
+
+              <ul className="flex flex-col gap-3 mb-6">
+                {[
+                  "Priority early access",
+                  "6 months of premium plan at no extra cost",
+                  "Exclusive MyPerro founding merch pack",
+                  "Featured on our Founding Pack wall: you and your dog\u2019s story on our website",
+                  "One-on-one onboarding call with the MyPerro team",
+                  "Direct private Slack / WhatsApp channel with the founding team",
+                ].map((perk) => (
+                  <li key={perk} className="flex items-start gap-3 text-[12px] text-white/50 font-light leading-[1.5]">
+                    <span className="w-5 h-5 rounded-full bg-[#F59E0B]/10 border border-[#F59E0B]/28 flex items-center justify-center shrink-0 mt-[1px]">
+                      <span className="w-[5px] h-[5px] rounded-full bg-[#F59E0B]" />
+                    </span>
+                    {perk}
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={() => onClaim("founding")}
+                className="w-full bg-[#F59E0B] text-black font-semibold text-[14px] py-[14px] rounded-full transition-opacity hover:opacity-90"
+              >
+                Join Founding Pack - ₹2,499 →
+              </button>
+              <p className="text-[10px] text-white/15 text-center mt-3 font-mono tracking-wide">
+                Fully refundable · Priority dispatch guaranteed
+              </p>
+            </div>
           </div>
         </div>
       </section>
