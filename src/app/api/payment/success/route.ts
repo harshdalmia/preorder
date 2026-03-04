@@ -60,7 +60,18 @@ export async function POST(req: NextRequest) {
     }
 
     if (submission.paymentStatus === "captured") {
-      return NextResponse.json({ message: "Already processed" });
+      return NextResponse.json({
+        message: "Already processed",
+        paymentStatus: "captured",
+        data: {
+          _id: submission._id.toString(),
+          cohortNumber: submission.cohortNumber,
+          cohortPosition: submission.cohortPosition,
+          referralCode: submission.referralCode,
+          tier: submission.tier,
+          amount: submission.amount,
+        },
+      });
     }
 
     const totalPaid = await db.collection("submissions").countDocuments({
@@ -89,10 +100,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message: "Payment verified successfully",
+      paymentStatus: "captured",
       data: {
+        _id: submissionId,
         cohortNumber,
         cohortPosition,
         referralCode,
+        tier: submission.tier,
+        amount: submission.amount,
       },
     });
   } catch (err) {

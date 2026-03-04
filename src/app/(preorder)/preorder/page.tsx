@@ -35,9 +35,11 @@ interface PaymentResult {
   cohortNumber: number;
   cohortPosition: number;
   referralCode: string;
+  tier: PackTier;
 }
 
 const POLL_MS = 30_000;
+const SUCCESS_CARD_STORAGE_KEY = "myperro_success_card";
 
 /* ── Live toast ──────────────────────────────────────────────── */
 function LiveToast({ activity }: { activity: ActivityEntry[] }) {
@@ -137,6 +139,36 @@ export default function PreorderPage() {
   }, [loadAll]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(SUCCESS_CARD_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as Partial<PaymentResult>;
+      if (
+        !parsed.petName ||
+        !parsed.ownerName ||
+        !parsed.cohortNumber ||
+        !parsed.cohortPosition ||
+        !parsed.referralCode
+      ) {
+        return;
+      }
+      const restored: PaymentResult = {
+        petName: parsed.petName,
+        ownerName: parsed.ownerName,
+        cohortNumber: parsed.cohortNumber,
+        cohortPosition: parsed.cohortPosition,
+        referralCode: parsed.referralCode,
+        tier: parsed.tier === "founding" ? "founding" : "starter",
+      };
+      setResult(restored);
+      setSuccOpen(false);
+    } catch {
+      // ignore invalid local storage data
+    }
+  }, []);
+
+  useEffect(() => {
     let lastY = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
@@ -153,6 +185,9 @@ export default function PreorderPage() {
       setResult(data);
       setModalOpen(false);
       setSuccOpen(true);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(SUCCESS_CARD_STORAGE_KEY, JSON.stringify(data));
+      }
       setConfetti(true);
       setTimeout(() => setConfetti(false), 5500);
       await loadAll();
@@ -285,7 +320,11 @@ export default function PreorderPage() {
       />
       <TickerStrip />
       <PerksSection />
-      <PetWall cohorts={cohorts} onClaim={() => openModal("starter")} />
+      <PetWall
+        cohorts={cohorts}
+        onClaim={() => openModal("starter")}
+        welcomeCard={result}
+      />
       <FinalCTA remaining={spots.remaining} onClaim={openModal} />
       <StepsSection />
       <FaqSection />
@@ -336,6 +375,7 @@ export default function PreorderPage() {
           cohortNumber={result.cohortNumber}
           cohortPosition={result.cohortPosition}
           referralCode={result.referralCode}
+          tier={result.tier}
         />
       )}
     </div>

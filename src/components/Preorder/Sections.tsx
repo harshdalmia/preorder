@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { FAQS, PLEDGE_LINES } from "@/lib/preorderData";
 import { ActivityEntry, CohortsData, CohortDog, timeAgo } from "@/lib/api";
+import { downloadWelcomeCard, shareWelcomeCard } from "@/lib/welcomeCard";
 
 export function SavingsSection() {
   return null;
@@ -106,11 +107,22 @@ function CircleGrid({
 export function PetWall({
   cohorts,
   onClaim,
+  welcomeCard,
 }: {
   cohorts: CohortsData;
   onClaim?: () => void;
+  welcomeCard?: {
+    petName: string;
+    ownerName: string;
+    cohortNumber: number;
+    cohortPosition: number;
+    referralCode: string;
+    tier: "starter" | "founding";
+  } | null;
 }) {
   const [activeCohort, setActiveCohort] = useState(0);
+  const [downloadingCard, setDownloadingCard] = useState(false);
+  const [sharingCard, setSharingCard] = useState(false);
   const cohort1Dogs = cohorts["cohort 1"] ?? [];
   const cohort2Dogs = cohorts["cohort 2"] ?? [];
   const cohort1Full = cohort1Dogs.length >= COHORT_SIZE;
@@ -124,20 +136,79 @@ export function PetWall({
         <p className="text-[12px] font-semibold tracking-[4px] uppercase text-white/20 mb-6 sm:mb-8">
           004 — The Pack
         </p>
-        <h2
-          className="font-playfair font-normal text-white leading-[1.08] mb-4 sm:mb-5"
-          style={{ fontSize: "clamp(32px, 4.5vw, 64px)" }}
-        >
-          <span className="text-[#E8622A]">20</span> spots.
-          <br />
-          That's it.
-        </h2>
-        <p className="text-[13px] sm:text-[14px] text-white/30 font-light leading-[1.9] max-w-[380px] mb-4">
-          Every circle is a pet parent who said yes early.{" "}
-          <span className="text-[#E8622A]">Orange</span> for Starter,{" "}
-          <span className="text-[#EFBF04]">Gold</span> for Founding,. The
-          pulsing one is waiting for you.
-        </p>
+        <div className={welcomeCard ? "grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_560px] gap-8 xl:gap-10 items-start" : ""}>
+          <div>
+            <h2
+              className="font-playfair font-normal text-white leading-[1.08] mb-4 sm:mb-5"
+              style={{ fontSize: "clamp(32px, 4.5vw, 64px)" }}
+            >
+              <span className="text-[#E8622A]">20</span> spots.
+              <br />
+              That's it.
+            </h2>
+            <p className="text-[13px] sm:text-[14px] text-white/30 font-light leading-[1.9] max-w-[380px] mb-4">
+              Every circle is a pet parent who said yes early.{" "}
+              <span className="text-[#E8622A]">Orange</span> for Starter,{" "}
+              <span className="text-[#EFBF04]">Gold</span> for Founding,. The
+              pulsing one is waiting for you.
+            </p>
+          </div>
+
+          {welcomeCard && (
+            <div className="bg-[#111] border border-[rgba(255,102,0,0.25)] rounded-2xl p-6 sm:p-7 w-full">
+              <p className="text-[11px] font-semibold tracking-[2px] uppercase text-[#FF6600] mb-2">
+                Welcome Card
+              </p>
+              <h3 className="font-bebas text-[30px] leading-none text-white mb-3">
+                Welcome to the Founding Pack!!
+              </h3>
+              <p className="text-[13px] text-white/65 leading-[1.8]">
+                {welcomeCard.tier === "founding"
+                  ? "You're officially a key member of the MyPerro journey. Your generous support not only guarantees you priority shipping from our first batch, but also unlocks exclusive benefits only for our Founding Members."
+                  : "You're officially part of the MyPerro journey. Your support not only guarantees you early shipping from our first batch, but also unlocks benefits."}
+              </p>
+              <p className="text-[13px] text-white/65 leading-[1.8] mt-3">
+                Welcome to the heart of the community. Let's create the future of smart pet care, together.
+              </p>
+              <p className="text-[13px] text-white mt-3">-Team MyPerro {"\u{1F43E}"}</p>
+              <p className="text-[11px] text-white/35 mt-3">
+                {welcomeCard.ownerName} with {welcomeCard.petName} | Cohort {welcomeCard.cohortNumber} | Spot #{welcomeCard.cohortPosition}
+              </p>
+              <button
+                onClick={async () => {
+                  if (!welcomeCard) return;
+                  try {
+                    setDownloadingCard(true);
+                    await downloadWelcomeCard(welcomeCard);
+                  } finally {
+                    setDownloadingCard(false);
+                  }
+                }}
+                disabled={downloadingCard}
+                className="mt-4 bg-[#FF6600] text-black font-semibold text-[12px] tracking-wide px-4 py-[10px] rounded-full transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {downloadingCard ? "Preparing..." : "Download Card"}
+              </button>
+              {typeof navigator !== "undefined" && "share" in navigator && (
+                <button
+                  onClick={async () => {
+                    if (!welcomeCard) return;
+                    try {
+                      setSharingCard(true);
+                      await shareWelcomeCard(welcomeCard);
+                    } finally {
+                      setSharingCard(false);
+                    }
+                  }}
+                  disabled={sharingCard}
+                  className="mt-3 ml-3 bg-white text-black font-semibold text-[12px] tracking-wide px-4 py-[10px] rounded-full transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {sharingCard ? "Opening..." : "Share Card"}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Cohort tabs */}
         <div className="flex gap-6 mt-8 sm:mt-10 border-b border-white/[0.06]">

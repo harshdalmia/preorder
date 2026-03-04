@@ -7,6 +7,8 @@ import { COLLAR_COLOURS, REFERRAL_SOURCES } from "@/lib/preorderData";
 import { submitOrder, confirmPayment, validateReferralCode } from "@/lib/api";
 
 export type PackTier = "starter" | "founding";
+const isPackTier = (value: unknown): value is PackTier =>
+  value === "starter" || value === "founding";
 
 const TIER_CONFIG = {
   starter: {
@@ -44,6 +46,7 @@ interface Props {
     cohortNumber: number;
     cohortPosition: number;
     referralCode: string;
+    tier: PackTier;
   }) => void;
   seedPet: string;
   tier?: PackTier;
@@ -258,12 +261,16 @@ export default function PreorderModal({
                 throw new Error(
                   "Invalid payment success response from backend.",
                 );
+              const resolvedTier: PackTier = isPackTier(data.data.tier)
+                ? data.data.tier
+                : tier;
               onSuccess({
                 petName: dogsname,
                 ownerName: name,
                 cohortNumber: data.data.cohortNumber,
                 cohortPosition: data.data.cohortPosition,
                 referralCode: data.data.referralCode,
+                tier: resolvedTier,
               });
               resolve();
             } catch (error: any) {
