@@ -471,6 +471,8 @@ export function FinalCTA({
                   "Direct private WhatsApp channel with the founding team",
                   "Exclusive Founding Pack sticker set delivered with collar",
                   "Priority early access",
+                  "Become a beta tester and try our health collar before public launch",
+                  "10% discount on our health collar",
                 ].map((perk) => (
                   <li
                     key={perk}

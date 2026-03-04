@@ -102,10 +102,11 @@ export default function Hero({
           </em>
         </h1>
 
-        <p className="text-[14px] sm:text-[15px] text-white/45 font-light leading-[1.85] max-w-[420px] mb-8 sm:mb-10">
-          India's first GPS collar with real-time tracking and intelligent
-          geo-fencing. The Founding Pack unlocks exclusive pricing and limited
-          perks.
+        <p className="text-[12px] sm:text-[15px] text-white/45 font-light leading-[1.85] max-w-[420px] mb-8 sm:mb-10">
+          Our smart collar tells you where your dog is in real time, with
+          geo-fencing that alerts you before they're even out of sight and a
+          high accuracy. The Founding Pack unlocks exclusive perks for the
+          people who get here early.
         </p>
 
         {/* CTA */}

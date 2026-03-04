@@ -18,7 +18,7 @@ export default function PerksSection() {
     {
       n: "PERK 02",
       title: "Activity Insights",
-      desc: "Know if your dog is getting enough movement, or sleeping more than usual.",
+      desc: "Spot your dog moves, where they tend to wander, and whether anything's quietly changed - all without being there to see it.",
     },
     {
       n: "PERK 03",
